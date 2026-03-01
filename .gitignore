@@ -6,3 +6,11 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Local-only collaboration and planning docs
+AGENTS.md
+API.md
+MEMORY.md
+SOUL.md
+STACK.md
+TEMPLATE_GUIDE.md

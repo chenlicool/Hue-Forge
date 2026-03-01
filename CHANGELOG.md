@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.45] - 2026-03-01
+### Changed
+- 将 `AGENTS.md`、`MEMORY.md`、`SOUL.md`、`API.md`、`STACK.md`、`TEMPLATE_GUIDE.md` 改为本地保留文件，不再作为公开仓库内容跟踪
+
 ## [0.0.44] - 2026-03-01
 ### Changed
 - 增加 `MIT` 许可证文件，并在页面中补充 GitHub 仓库入口与开源说明页脚

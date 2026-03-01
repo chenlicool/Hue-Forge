@@ -98,7 +98,6 @@ export default {
 - `scripts/`：辅助脚本；当前包含颜色对比度检查脚本
 - `archive/`：历史备份与遗留配置归档
 - `ARCHITECTURE.md`：技术架构与核心流程说明
-- `MEMORY.md`：按时间倒序记录影响面判断与执行约束
 - `CHANGELOG.md`：版本变更记录
 
 ## 环境依赖
@@ -111,5 +110,6 @@ export default {
 - 已完成根目录工程整理并推送到 GitHub
 - 已补齐 GitHub Pages 发布配置；仓库设置中的 `Pages -> Source` 仍需手动切到 `GitHub Actions`
 - 已补齐 `MIT` 许可证与页面内开源入口
+- 已将内部协作与规划文档改为本地保留，不再作为公开仓库内容分发
 - 当前构建可通过，但生产包体积存在告警，后续可继续做 chunk 拆分
 - `archive/metadata.json` 是否仍需长期保留，待确认/未知
