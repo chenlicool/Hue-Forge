@@ -37,7 +37,7 @@ export default function App() {
   const selectedPalette = palettes.find(p => p.id === selectedHueId);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F5F5F5] text-gray-900 font-sans overflow-hidden">
+    <div className="flex h-screen flex-col bg-[#F5F5F5] text-gray-900 font-sans overflow-hidden">
       {/* 1. Branding Header */}
       <TopBar /> 
       

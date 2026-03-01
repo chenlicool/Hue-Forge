@@ -7,7 +7,7 @@ import {
 
 export function AppFooter() {
   return (
-    <footer className="border-t border-gray-200 bg-white/92 px-6 py-3 backdrop-blur-sm">
+    <footer className="shrink-0 border-t border-gray-200 bg-white/92 px-6 py-3 backdrop-blur-sm">
       <div className="flex flex-col gap-2 text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <p className="leading-5">
           Hue Forge is open source. Review the repository and license before reuse or redistribution.
