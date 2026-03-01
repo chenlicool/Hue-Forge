@@ -1,4 +1,6 @@
 import React from 'react';
+import { Github } from 'lucide-react';
+import { PROJECT_REPO_URL } from '@/utils/projectMeta';
 
 export function TopBar() {
   return (
@@ -21,6 +23,17 @@ export function TopBar() {
             Color System Lab
           </span>
         </div>
+      </div>
+      <div className="ml-auto">
+        <a
+          href={PROJECT_REPO_URL}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Open Hue Forge GitHub repository"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900"
+        >
+          <Github className="h-5 w-5" />
+        </a>
       </div>
     </header>
   );

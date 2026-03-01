@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.44] - 2026-03-01
+### Changed
+- 增加 `MIT` 许可证文件，并在页面中补充 GitHub 仓库入口与开源说明页脚
+
 ## [0.0.43] - 2026-03-01
 ### Changed
 - 增加 GitHub Pages 自动部署工作流，并为 Vite 生产构建补充 Pages 子路径 `base` 配置

@@ -6,6 +6,7 @@ import { MatrixBoard } from '@/components/MatrixBoard';
 import { InsightPanel } from '@/components/InsightPanel';
 import { Toolbar } from '@/components/Toolbar';
 import { ExportPanel } from '@/components/ExportPanel';
+import { AppFooter } from '@/components/AppFooter';
 
 export default function App() {
   const {
@@ -36,7 +37,7 @@ export default function App() {
   const selectedPalette = palettes.find(p => p.id === selectedHueId);
 
   return (
-    <div className="flex flex-col h-screen bg-[#F5F5F5] text-gray-900 font-sans overflow-hidden">
+    <div className="flex min-h-screen flex-col bg-[#F5F5F5] text-gray-900 font-sans overflow-hidden">
       {/* 1. Branding Header */}
       <TopBar /> 
       
@@ -57,7 +58,7 @@ export default function App() {
         />
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* 4. Main Matrix Output */}
         <MatrixBoard 
           palettes={palettes}
@@ -95,6 +96,8 @@ export default function App() {
           onClose={() => setIsExportOpen(false)}
         />
       )}
+
+      <AppFooter />
     </div>
   );
 }

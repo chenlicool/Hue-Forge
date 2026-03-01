@@ -47,6 +47,13 @@ npm run check:contrast
 https://chenlicool.github.io/Hue-Forge/
 ```
 
+## 开源说明
+
+- 本项目当前按 `MIT License` 开源
+- 仓库地址：[chenlicool/Hue-Forge](https://github.com/chenlicool/Hue-Forge)
+- 许可证全文见仓库根目录 [LICENSE](https://github.com/chenlicool/Hue-Forge/blob/main/LICENSE)
+- 若你使用第三方 API 或自行扩展外部服务，对应服务条款与费用不包含在本项目开源许可证内
+
 ## 使用流程
 
 1. 在顶部工具栏选择或新增 hue 集合
@@ -103,5 +110,6 @@ export default {
 
 - 已完成根目录工程整理并推送到 GitHub
 - 已补齐 GitHub Pages 发布配置；仓库设置中的 `Pages -> Source` 仍需手动切到 `GitHub Actions`
+- 已补齐 `MIT` 许可证与页面内开源入口
 - 当前构建可通过，但生产包体积存在告警，后续可继续做 chunk 拆分
 - `archive/metadata.json` 是否仍需长期保留，待确认/未知
