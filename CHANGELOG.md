@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.46] - 2026-03-01
+### Changed
+- 为 `README.md` 补充英文镜像内容，形成中英双语项目说明
+
 ## [0.0.45] - 2026-03-01
 ### Changed
 - 将 `AGENTS.md`、`MEMORY.md`、`SOUL.md`、`API.md`、`STACK.md`、`TEMPLATE_GUIDE.md` 改为本地保留文件，不再作为公开仓库内容跟踪
