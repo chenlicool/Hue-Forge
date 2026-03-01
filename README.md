@@ -1,29 +1,92 @@
 # Hue Forge
-颜色系统生成工具，基于 HSB 与 WCAG 对比度规则生成和调整色阶。
 
-## 快速启动
-1. 在仓库根目录安装依赖：`npm install`
-2. 启动开发服务：`npm run dev`
-3. 默认访问地址：`http://localhost:3000`
+![Hue Forge Cover](docs/cover.svg)
 
-## 功能特性
-- 生成多色相色阶矩阵
-- 调整亮度基线与饱和度/亮度曲线
-- 查看对比度与 WCAG 等级
-- 导出 `CSS` / `Tailwind` / `Tailwind 4` / `Tokens`
-- 支持复制结构化 Tokens 文本直接提供给 AI 使用
-- 导出面板支持 `AI Export` 开关，可复制带上下文提示的 AI 友好文本
+Hue Forge 是一个面向设计系统和品牌色板工作的颜色系统生成工具。它基于 HSB 曲线模型与 WCAG 对比度规则，帮助你生成、调整、检查并导出一整套可落地的色阶。
+
+## 项目定位
+
+- 面向需要快速生成多色相、多层级色板的设计与前端工作流
+- 把“颜色生成、可读性检查、代码导出”收敛在同一个本地前端工具里
+- 当前为纯前端单页应用，不依赖后端服务
+
+## 核心能力
+
+- 生成多色相色阶矩阵，并保持各列 step 结构对齐
+- 调整 `Base Scale`、单列饱和度曲线和亮度曲线
+- 同时查看黑字 / 白字对比度与 WCAG 等级
+- 导出 `CSS`、`Tailwind`、`Tailwind 4`、`Tokens`
+- 支持 `AI Export`，复制带上下文说明的结构化文本给 AI 使用
+
+## 快速开始
+
+1. 安装依赖：`npm install`
+2. 启动开发环境：`npm run dev`
+3. 打开浏览器访问：`http://localhost:3000`
+
+## 常用命令
+
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run check:contrast
+```
+
+## 使用流程
+
+1. 在顶部工具栏选择或新增 hue 集合
+2. 在左侧 `Base` 轨道调整整体亮度基线
+3. 选中某个色条或 step，微调饱和度与亮度曲线
+4. 观察右侧对比度反馈，确认文字可读性
+5. 在导出面板复制对应格式，直接用于代码库或 AI 工作流
+
+## 导出示例
+
+Hue Forge 会基于当前画面中的 palette 直接生成导出结果，而不是维护另一套脱节的 token 状态。典型输出如下：
+
+```css
+:root {
+  --blue-10: #f3f8ff;
+  --blue-20: #dbeafe;
+  --blue-30: #bfdbfe;
+  --blue-40: #93c5fd;
+}
+```
+
+```js
+export default {
+  theme: {
+    extend: {
+      colors: {
+        blue: {
+          10: "#f3f8ff",
+          20: "#dbeafe",
+          30: "#bfdbfe",
+          40: "#93c5fd"
+        }
+      }
+    }
+  }
+}
+```
 
 ## 目录结构
-- `archive/`：历史备份与遗留配置归档
-- `scripts/`：辅助脚本
-- `src/`：前端源码
-- `archive/color-system-v2.0.zip`：迁移来源压缩备份
-- `ARCHITECTURE.md` / `MEMORY.md` / `CHANGELOG.md`：过程文档
 
-## 辅助命令
-- `npm run check:contrast`：运行颜色对比度辅助脚本
+- `src/`：前端源码
+- `scripts/`：辅助脚本；当前包含颜色对比度检查脚本
+- `archive/`：历史备份与遗留配置归档
+- `ARCHITECTURE.md`：技术架构与核心流程说明
+- `MEMORY.md`：按时间倒序记录影响面判断与执行约束
+- `CHANGELOG.md`：版本变更记录
 
 ## 环境依赖
-- Node.js 18+（待确认/未知：更低版本兼容性）
+
+- Node.js 18+（更低版本兼容性待确认/未知）
 - npm
+
+## 当前状态
+
+- 已完成根目录工程整理并推送到 GitHub
+- 当前构建可通过，但生产包体积存在告警，后续可继续做 chunk 拆分
+- `archive/metadata.json` 是否仍需长期保留，待确认/未知
