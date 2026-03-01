@@ -7,6 +7,7 @@ import { InsightPanel } from '@/components/InsightPanel';
 import { Toolbar } from '@/components/Toolbar';
 import { ExportPanel } from '@/components/ExportPanel';
 import { AppFooter } from '@/components/AppFooter';
+import { buildExportBundle } from '@/utils/exportFormats';
 
 export default function App() {
   const {
@@ -27,6 +28,7 @@ export default function App() {
 
   const [activeStepIndex, setActiveStepIndex] = useState<number | null>(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [figmaCopyState, setFigmaCopyState] = useState<'idle' | 'done'>('idle');
 
   const handleSelectHue = (id: string) => {
     setSelectedHueId(id);
@@ -36,6 +38,21 @@ export default function App() {
   const palettes = generatePalette;
   const selectedPalette = palettes.find(p => p.id === selectedHueId);
 
+  const handleCopyFigma = async () => {
+    const svgContent = buildExportBundle(palettes, baseScale).svg;
+
+    if ('ClipboardItem' in window) {
+      const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
+      const textBlob = new Blob([svgContent], { type: 'text/plain' });
+      await navigator.clipboard.write([new ClipboardItem({ 'image/svg+xml': svgBlob, 'text/plain': textBlob })]);
+    } else {
+      await navigator.clipboard.writeText(svgContent);
+    }
+
+    setFigmaCopyState('done');
+    window.setTimeout(() => setFigmaCopyState('idle'), 1200);
+  };
+
   return (
     <div className="flex h-screen flex-col bg-[#F5F5F5] text-gray-900 font-sans overflow-hidden">
       {/* 1. Branding Header */}
@@ -44,7 +61,9 @@ export default function App() {
       {/* 2. Action Toolbar */}
       <Toolbar 
         onSetPresetHues={setPresetHues} 
-        onOpenExport={() => setIsExportOpen(true)} 
+        onOpenExport={() => setIsExportOpen(true)}
+        onCopyFigma={handleCopyFigma}
+        figmaCopyState={figmaCopyState}
       />
 
       {/* 3. Hue Spectrum Input */}

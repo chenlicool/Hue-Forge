@@ -10,34 +10,29 @@ interface ExportPanelProps {
   palettes: (HueConfig & { colors: ColorStep[] })[];
 }
 
-const EXPORT_TABS: Array<{ id: ExportFormat; label: string }> = [
+type ExportPanelFormat = Exclude<ExportFormat, 'svg'>;
+
+const EXPORT_TABS: Array<{ id: ExportPanelFormat; label: string }> = [
   { id: 'css', label: 'CSS' },
   { id: 'tailwind', label: 'Tailwind' },
   { id: 'tailwind4', label: 'Tailwind 4' },
   { id: 'tokens', label: 'Tokens' },
-  { id: 'svg', label: 'SVG / Figma' },
 ];
 
 export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) {
-  const [activeFormat, setActiveFormat] = useState<ExportFormat>('css');
+  const [activeFormat, setActiveFormat] = useState<ExportPanelFormat>('css');
   const [aiMode, setAiMode] = useState(false);
   const [copyState, setCopyState] = useState<'idle' | 'done'>('idle');
 
   const exports = useMemo(() => buildExportBundle(palettes, baseScale), [palettes, baseScale]);
   const rawContent = exports[activeFormat];
-  const effectiveAiMode = aiMode && activeFormat !== 'svg';
+  const effectiveAiMode = aiMode;
   const content = effectiveAiMode
     ? buildAiExportContent(activeFormat, rawContent, palettes, baseScale)
     : rawContent;
 
   const handleCopy = async () => {
-    if (activeFormat === 'svg' && 'ClipboardItem' in window) {
-      const svgBlob = new Blob([rawContent], { type: 'image/svg+xml' });
-      const textBlob = new Blob([rawContent], { type: 'text/plain' });
-      await navigator.clipboard.write([new ClipboardItem({ 'image/svg+xml': svgBlob, 'text/plain': textBlob })]);
-    } else {
-      await navigator.clipboard.writeText(content);
-    }
+    await navigator.clipboard.writeText(content);
     setCopyState('done');
     window.setTimeout(() => setCopyState('idle'), 1200);
   };
@@ -59,7 +54,7 @@ export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) 
               className="inline-flex items-center gap-2 rounded-xl bg-lime-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-lime-500"
             >
               <Copy className="h-4 w-4" />
-              {copyState === 'done' ? 'Copied' : activeFormat === 'svg' ? 'Copy SVG' : 'Copy'}
+              {copyState === 'done' ? 'Copied' : 'Copy'}
             </button>
             <button
               onClick={onClose}
@@ -99,22 +94,18 @@ export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) 
                 <div>
                   <div className="text-sm font-semibold text-slate-900">AI Export</div>
                   <div className="mt-1 text-xs leading-5 text-slate-500">
-                    {activeFormat === 'svg'
-                      ? 'SVG export always stays raw so Figma can paste it directly.'
-                      : 'Wrap the current export in AI-friendly instructions.'}
+                    Wrap the current export in AI-friendly instructions.
                   </div>
                 </div>
                 <button
                   type="button"
                   role="switch"
                   aria-checked={effectiveAiMode}
-                  onClick={() => activeFormat !== 'svg' && setAiMode((value) => !value)}
+                  onClick={() => setAiMode((value) => !value)}
                   className={cn(
                     'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors',
                     effectiveAiMode ? 'bg-lime-500' : 'bg-slate-300',
-                    activeFormat === 'svg' && 'cursor-not-allowed opacity-60',
                   )}
-                  disabled={activeFormat === 'svg'}
                 >
                   <span
                     className={cn(
@@ -134,7 +125,7 @@ export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) 
                 <span className="font-medium text-slate-800">Tokens</span> includes structured metadata for AI parsing, including HSB and contrast data.
               </p>
               <p>
-                <span className="font-medium text-slate-800">SVG / Figma</span> copies the full palette board as SVG so you can paste it directly into Figma.
+                <span className="font-medium text-slate-800">Figma</span> copy lives in the toolbar and writes the current palette board as SVG directly to your clipboard.
               </p>
               {effectiveAiMode && (
                 <p className="rounded-xl bg-lime-50 px-3 py-2 text-xs leading-5 text-lime-800">

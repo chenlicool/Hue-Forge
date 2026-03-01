@@ -9,7 +9,8 @@
 - `archive/`：历史备份与遗留配置归档目录；当前存放迁移来源压缩包与旧元数据文件。
 - `scripts/`：项目辅助脚本目录；当前存放本地颜色对比度计算脚本。
 - `src/`：界面组件、状态 Hook、颜色算法工具。
-- `src/components/ExportPanel.tsx`：代码导出面板，负责多格式预览与复制，包括 `SVG / Figma`。
+- `src/components/ExportPanel.tsx`：代码导出面板，负责文本格式预览与复制。
+- `src/components/Toolbar.tsx`：顶部工具栏，负责预设色相生成、代码导出入口与 `Figma` 直接复制按钮。
 - `src/components/AppFooter.tsx`：页面底部开源信息条，负责展示 GitHub 仓库与许可证链接。
 - `src/utils/exportFormats.ts`：导出生成器，负责把当前 palette 转成 `CSS / Tailwind / Tailwind 4 / Tokens / SVG`，并按需包装为 AI 友好文本。
 - `archive/color-system-v2.0.zip`：迁移来源压缩备份，是否长期保留待确认/未知。
@@ -45,8 +46,9 @@
    中段/尾部插入仍采用局部插值，维持原有中段节奏不被整体改写。
 11. 当用户修改单个 step 的亮度基线时，会把亮度差值同步施加到所有 hue 的同索引亮度点，保持整体阶梯结构对齐。
 12. 导出功能直接复用当前 palette 计算结果，不重复推导颜色：
-   `ExportPanel` 读取当前 `palettes + baseScale`，由 `exportFormats.ts` 一次性生成 `CSS / Tailwind / Tailwind 4 / Tokens / SVG`。
-13. `SVG / Figma` 导出会把当前整张色板排版为独立 SVG 文档，并在复制时优先写入 `image/svg+xml`，便于直接粘贴到 Figma。
+   `ExportPanel` 读取当前 `palettes + baseScale`，生成 `CSS / Tailwind / Tailwind 4 / Tokens`；
+   工具栏中的 `Figma` 按钮则直接复用同一份 `SVG` 导出结果。
+13. `SVG / Figma` 导出会把当前整张色板排版为独立 SVG 文档，并在工具栏复制时优先写入 `image/svg+xml`，便于直接粘贴到 Figma。
 14. `Tokens` 导出除 Hex 颜色外，还附带 HSB、黑白对比度和 WCAG 结果，便于 AI 或下游工具做二次消费。
 15. 导出面板支持 `AI Export` 开关：
     开启后不改变原始数据结构，只在复制内容外层追加格式说明、palette 摘要与使用约束，便于直接粘贴到 AI。
