@@ -1,0 +1,5 @@
+{
+  "name": "Color System v2.0",
+  "description": "A professional, accessibility-focused color scale generator based on HSB models and WCAG contrast guidelines.",
+  "requestFramePermissions": []
+}

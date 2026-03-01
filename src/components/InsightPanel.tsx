@@ -1,0 +1,197 @@
+import React from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area } from 'recharts';
+import { HueConfig, ColorStep } from '@/utils/types';
+import { getBrightnessThreshold } from '@/utils/color';
+
+interface InsightPanelProps {
+  palettes: (HueConfig & { colors: ColorStep[] })[];
+  selectedPalette: (HueConfig & { colors: ColorStep[] }) | undefined;
+  activeStepIndex: number | null;
+  onUpdateCurve: (type: 'saturation' | 'brightness', index: number, value: number) => void;
+}
+
+export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpdateCurve }: InsightPanelProps) {
+  if (!selectedPalette) {
+    return (
+      <div className="w-80 border-l border-gray-200 bg-white p-6 flex items-center justify-center text-gray-400 text-sm">
+        Select a hue to view insights
+      </div>
+    );
+  }
+
+  const data = selectedPalette.colors.map((c, i) => {
+    // Calculate safe zones for this step
+    const isLight = c.step <= 40;
+    const isDark = c.step >= 70;
+    
+    let safeMin = 0;
+    let safeMax = 100;
+
+    if (isLight) {
+        // Must be light enough for black text (AAA = 7)
+        safeMin = getBrightnessThreshold(c.h, c.s, 7, 'black');
+        safeMax = 100;
+    } else if (isDark) {
+        // Must be dark enough for white text (AAA = 7)
+        safeMin = 0;
+        safeMax = getBrightnessThreshold(c.h, c.s, 7, 'white');
+    } else {
+        // Mid tones (50-60). 
+        const maxForWhiteAA = getBrightnessThreshold(c.h, c.s, 4.5, 'white');
+        safeMin = 0;
+        safeMax = maxForWhiteAA;
+    }
+
+    const point: any = {
+        step: c.step,
+        index: i,
+        safeMin,
+        safeMax,
+        safeRange: [safeMin, safeMax]
+    };
+
+    // Add data for all palettes
+    palettes.forEach(p => {
+      point[`s_${p.id}`] = p.colors[i].s;
+      point[`b_${p.id}`] = p.colors[i].b;
+    });
+
+    return point;
+  });
+
+  const activeColor = activeStepIndex !== null ? selectedPalette.colors[activeStepIndex] : null;
+  return (
+    <aside className="w-96 border-l border-gray-200 bg-white flex flex-col h-full overflow-y-auto">
+      <div className="p-6 border-b border-gray-200">
+        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+          {selectedPalette.name} ({selectedPalette.hue}°)
+        </h3>
+        <p className="text-gray-400 text-xs">Curve Analysis & Adjustment</p>
+      </div>
+
+      {/* Editor Controls */}
+      {activeColor && activeStepIndex !== null && (
+        <div className="p-6 border-b border-gray-200 bg-gray-50">
+          <div className="flex items-center gap-2 mb-4">
+            <div 
+              className="w-8 h-8 rounded shadow-sm border border-gray-200"
+              style={{ backgroundColor: activeColor.hex }}
+            />
+            <div>
+              <div className="text-sm font-mono text-gray-900">{activeColor.hex}</div>
+              <div className="text-xs text-gray-500">Step {activeColor.step}</div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between mb-1">
+                <label className="text-xs text-gray-500">Saturation</label>
+                <span className="text-xs font-mono text-gray-400">{Math.round(activeColor.s)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={activeColor.s}
+                onChange={(e) => onUpdateCurve('saturation', activeStepIndex, Number(e.target.value))}
+                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+            </div>
+            <div>
+              <div className="flex justify-between mb-1">
+                <label className="text-xs text-gray-500">Brightness</label>
+                <span className="text-xs font-mono text-gray-400">{Math.round(activeColor.b)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={activeColor.b}
+                onChange={(e) => onUpdateCurve('brightness', activeStepIndex, Number(e.target.value))}
+                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Charts */}
+      <div className="flex-1 p-6 space-y-8">
+        
+        {/* Saturation Curve */}
+        <div className="h-48">
+          <h4 className="text-xs font-medium text-gray-400 mb-4">Saturation Curve</h4>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="step" stroke="#999" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis stroke="#999" fontSize={10} tickLine={false} axisLine={false} domain={[0, 100]} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#fff', border: '1px solid #eee', borderRadius: '4px', fontSize: '12px' }}
+                itemStyle={{ color: '#666' }}
+              />
+              {palettes.map(p => {
+                const isSelected = p.id === selectedPalette.id;
+                return (
+                  <Line 
+                    key={p.id}
+                    type="monotone" 
+                    dataKey={`s_${p.id}`} 
+                    name={p.name}
+                    stroke={isSelected ? '#3B82F6' : '#E5E7EB'} 
+                    strokeWidth={isSelected ? 2 : 1} 
+                    dot={isSelected ? { r: 3, fill: '#3B82F6', strokeWidth: 0 } : false} 
+                    activeDot={isSelected ? { r: 5, strokeWidth: 0 } : false}
+                    isAnimationActive={false}
+                  />
+                );
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Brightness Curve */}
+        <div className="h-48">
+          <h4 className="text-xs font-medium text-gray-400 mb-4">Brightness Curve</h4>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="step" stroke="#999" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis stroke="#999" fontSize={10} tickLine={false} axisLine={false} domain={[0, 100]} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#fff', border: '1px solid #eee', borderRadius: '4px', fontSize: '12px' }}
+                itemStyle={{ color: '#666' }}
+              />
+              {/* Safe Zone Area */}
+              <Area 
+                type="monotone" 
+                dataKey="safeRange" 
+                stroke="none" 
+                fill="#10B981" 
+                fillOpacity={0.1} 
+              />
+              {palettes.map(p => {
+                const isSelected = p.id === selectedPalette.id;
+                return (
+                  <Line 
+                    key={p.id}
+                    type="monotone" 
+                    dataKey={`b_${p.id}`} 
+                    name={p.name}
+                    stroke={isSelected ? '#F59E0B' : '#E5E7EB'} 
+                    strokeWidth={isSelected ? 2 : 1} 
+                    dot={isSelected ? { r: 3, fill: '#F59E0B', strokeWidth: 0 } : false} 
+                    activeDot={isSelected ? { r: 5, strokeWidth: 0 } : false}
+                    isAnimationActive={false}
+                  />
+                );
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+      </div>
+    </aside>
+  );
+}
