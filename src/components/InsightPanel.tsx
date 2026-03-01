@@ -61,7 +61,8 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
 
   const activeColor = activeStepIndex !== null ? selectedPalette.colors[activeStepIndex] : null;
   const tooltipProps = {
-    allowEscapeViewBox: { x: true, y: true },
+    allowEscapeViewBox: { x: true, y: false },
+    reverseDirection: { x: false, y: true },
     wrapperStyle: {
       zIndex: 40,
       outline: 'none',
