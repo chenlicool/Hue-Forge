@@ -1,3 +1,13 @@
+# 2026-03-01 20:45
+时间：2026-03-01 20:45
+目标：为仓库配置 GitHub Pages 免费静态部署。
+改动：影响面判断已完成；计划仅调整 Vite 的生产 `base` 解析逻辑，新增 GitHub Actions 发布工作流，并补充 README 部署说明。
+当前：项目是无路由依赖的 Vite 静态前端，适合部署到 GitHub Pages；当前仓库尚未配置 Pages workflow，生产资源路径仍默认为根路径。
+禁止动：不改 `src/` 业务逻辑、不引入后端服务、不硬编码待确认/未知的自定义域名；仅完成 Pages 所需配置。
+待办：更新 `vite.config.ts`；新增 `.github/workflows/deploy.yml`；补充 `README.md` / `CHANGELOG.md`；执行构建验证并推送。
+回滚：删除 Pages workflow，恢复当前 `vite.config.ts` 的 `base` 配置。
+约束：文档优先、最小补丁、中文优先；未知信息必须标注“待确认/未知”；Pages 启用开关仍需在 GitHub Settings 中手动设为 GitHub Actions。
+
 # 2026-03-01 20:32
 时间：2026-03-01 20:32
 目标：提升 GitHub 仓库首页展示质量，使首次访问者能快速理解 Hue Forge 的定位与使用方式。

@@ -5,8 +5,11 @@ import {defineConfig, loadEnv} from 'vite';
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
+  const pagesBase = process.env.VITE_PUBLIC_BASE;
+
   return {
     plugins: [react(), tailwindcss()],
+    base: pagesBase && pagesBase.length > 0 ? pagesBase : '/',
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },

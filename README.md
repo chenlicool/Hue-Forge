@@ -33,6 +33,20 @@ npm run lint
 npm run check:contrast
 ```
 
+## GitHub Pages 部署
+
+仓库已经补好 GitHub Pages 发布工作流。你只需要在 GitHub 仓库中完成一次设置：
+
+1. 打开仓库 `Settings -> Pages`
+2. 在 `Build and deployment` 中把 `Source` 切换为 `GitHub Actions`
+3. 后续推送到 `main` 分支时会自动构建并发布
+
+当前仓库的 Pages 地址应为：
+
+```text
+https://chenlicool.github.io/Hue-Forge/
+```
+
 ## 使用流程
 
 1. 在顶部工具栏选择或新增 hue 集合
@@ -88,5 +102,6 @@ export default {
 ## 当前状态
 
 - 已完成根目录工程整理并推送到 GitHub
+- 已补齐 GitHub Pages 发布配置；仓库设置中的 `Pages -> Source` 仍需手动切到 `GitHub Actions`
 - 当前构建可通过，但生产包体积存在告警，后续可继续做 chunk 拆分
 - `archive/metadata.json` 是否仍需长期保留，待确认/未知
