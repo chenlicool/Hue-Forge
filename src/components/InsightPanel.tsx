@@ -60,6 +60,37 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
   });
 
   const activeColor = activeStepIndex !== null ? selectedPalette.colors[activeStepIndex] : null;
+  const tooltipProps = {
+    allowEscapeViewBox: { x: true, y: true },
+    wrapperStyle: {
+      zIndex: 40,
+      outline: 'none',
+      pointerEvents: 'none',
+    },
+    contentStyle: {
+      backgroundColor: 'rgba(255,255,255,0.98)',
+      border: '1px solid #E5E7EB',
+      borderRadius: '12px',
+      boxShadow: '0 16px 40px rgba(15,23,42,0.14)',
+      fontSize: '12px',
+      padding: '10px 12px',
+    },
+    itemStyle: {
+      color: '#4B5563',
+      paddingTop: '2px',
+      paddingBottom: '2px',
+    },
+    labelStyle: {
+      color: '#111827',
+      fontWeight: 600,
+      marginBottom: '6px',
+    },
+    cursor: {
+      stroke: '#CBD5E1',
+      strokeWidth: 1,
+    },
+  } as const;
+
   return (
     <aside className="w-96 border-l border-gray-200 bg-white flex flex-col h-full overflow-y-auto">
       <div className="p-6 border-b border-gray-200">
@@ -120,17 +151,14 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
       <div className="flex-1 p-6 space-y-8">
         
         {/* Saturation Curve */}
-        <div className="h-48">
+        <div className="relative h-48 hover:z-20">
           <h4 className="text-xs font-medium text-gray-400 mb-4">Saturation Curve</h4>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
               <XAxis dataKey="step" stroke="#999" fontSize={10} tickLine={false} axisLine={false} />
               <YAxis stroke="#999" fontSize={10} tickLine={false} axisLine={false} domain={[0, 100]} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#fff', border: '1px solid #eee', borderRadius: '4px', fontSize: '12px' }}
-                itemStyle={{ color: '#666' }}
-              />
+              <Tooltip {...tooltipProps} />
               {palettes.map(p => {
                 const isSelected = p.id === selectedPalette.id;
                 return (
@@ -152,17 +180,14 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
         </div>
 
         {/* Brightness Curve */}
-        <div className="h-48">
+        <div className="relative h-48 hover:z-20">
           <h4 className="text-xs font-medium text-gray-400 mb-4">Brightness Curve</h4>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
               <XAxis dataKey="step" stroke="#999" fontSize={10} tickLine={false} axisLine={false} />
               <YAxis stroke="#999" fontSize={10} tickLine={false} axisLine={false} domain={[0, 100]} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#fff', border: '1px solid #eee', borderRadius: '4px', fontSize: '12px' }}
-                itemStyle={{ color: '#666' }}
-              />
+              <Tooltip {...tooltipProps} />
               {/* Safe Zone Area */}
               <Area 
                 type="monotone" 
