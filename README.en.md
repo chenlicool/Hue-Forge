@@ -17,7 +17,7 @@ Hue Forge is a color system generator for design systems and brand palette work.
 - Generate multi-hue palette matrices with aligned step structures
 - Adjust the `Base Scale` plus per-strip saturation and brightness curves
 - Review black-on-color and white-on-color contrast with WCAG grades
-- Export `CSS`, `Tailwind`, `Tailwind 4`, and `Tokens`
+- Export `CSS`, `Tailwind`, `Tailwind 4`, `Tokens`, and `SVG / Figma`
 - Support `AI Export` for copying structured, AI-ready context text
 
 ## Quick Start

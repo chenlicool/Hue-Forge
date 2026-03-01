@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.51] - 2026-03-02
+### Changed
+- 为导出面板增加 `SVG / Figma` 复制能力，可将整张色板以 SVG 形式粘贴到 Figma
+
 ## [0.0.50] - 2026-03-02
 ### Changed
 - 将 README 重构为 `README.md` 中文版和 `README.en.md` 英文版，并在顶部提供语言切换入口

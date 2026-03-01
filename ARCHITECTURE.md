@@ -9,9 +9,9 @@
 - `archive/`：历史备份与遗留配置归档目录；当前存放迁移来源压缩包与旧元数据文件。
 - `scripts/`：项目辅助脚本目录；当前存放本地颜色对比度计算脚本。
 - `src/`：界面组件、状态 Hook、颜色算法工具。
-- `src/components/ExportPanel.tsx`：代码导出面板，负责多格式预览与复制。
+- `src/components/ExportPanel.tsx`：代码导出面板，负责多格式预览与复制，包括 `SVG / Figma`。
 - `src/components/AppFooter.tsx`：页面底部开源信息条，负责展示 GitHub 仓库与许可证链接。
-- `src/utils/exportFormats.ts`：导出文本生成器，负责把当前 palette 转成 `CSS / Tailwind / Tailwind 4 / Tokens`，并按需包装为 AI 友好文本。
+- `src/utils/exportFormats.ts`：导出生成器，负责把当前 palette 转成 `CSS / Tailwind / Tailwind 4 / Tokens / SVG`，并按需包装为 AI 友好文本。
 - `archive/color-system-v2.0.zip`：迁移来源压缩备份，是否长期保留待确认/未知。
 
 ## 3. 技术栈
@@ -45,11 +45,12 @@
    中段/尾部插入仍采用局部插值，维持原有中段节奏不被整体改写。
 11. 当用户修改单个 step 的亮度基线时，会把亮度差值同步施加到所有 hue 的同索引亮度点，保持整体阶梯结构对齐。
 12. 导出功能直接复用当前 palette 计算结果，不重复推导颜色：
-   `ExportPanel` 读取当前 `palettes + baseScale`，由 `exportFormats.ts` 一次性生成 `CSS / Tailwind / Tailwind 4 / Tokens` 四类文本。
-13. `Tokens` 导出除 Hex 颜色外，还附带 HSB、黑白对比度和 WCAG 结果，便于 AI 或下游工具做二次消费。
-14. 导出面板支持 `AI Export` 开关：
+   `ExportPanel` 读取当前 `palettes + baseScale`，由 `exportFormats.ts` 一次性生成 `CSS / Tailwind / Tailwind 4 / Tokens / SVG`。
+13. `SVG / Figma` 导出会把当前整张色板排版为独立 SVG 文档，并在复制时优先写入 `image/svg+xml`，便于直接粘贴到 Figma。
+14. `Tokens` 导出除 Hex 颜色外，还附带 HSB、黑白对比度和 WCAG 结果，便于 AI 或下游工具做二次消费。
+15. 导出面板支持 `AI Export` 开关：
     开启后不改变原始数据结构，只在复制内容外层追加格式说明、palette 摘要与使用约束，便于直接粘贴到 AI。
-15. 颜色角度映射规则如下，新增 hue 与预设 hue 共享同一套区间判断：
+16. 颜色角度映射规则如下，新增 hue 与预设 hue 共享同一套区间判断：
     `345°-15°`：Red 曲线。低亮部保持低到中等饱和度，深色区维持暖红识别，避免过早脏暗。
     `15°-38°`：Orange 曲线。中高亮区域允许快速升饱和，亮部亮度接近 100，保证橙色在浅阶依然鲜明。
     `38°-60°`：Yellow 曲线。黄色天然高亮，算法通过高亮度配合中高饱和，避免浅阶发灰，同时在深阶压低亮度保留层次。
@@ -62,11 +63,11 @@
     `250°-285°`：Violet 曲线。整体饱和度起点较低，随 step 增加平滑提升，避免紫色在浅阶过脏。
     `285°-315°`：Pink 曲线。亮部接近中性粉，中段进入明显色相区，深段仍保留足够颜色感但避免过荧。
     `315°-345°`：Crimson 曲线。作为洋红与红之间的过渡色，采用比 Red 更偏玫红的深色表现，保持冷暖之间的张力。
-16. 当前默认预置 hue 采用以下固定角度：
+17. 当前默认预置 hue 采用以下固定角度：
     `Gray = 0°`、`Accent Gray = 210°`、`Red = 0°`、`Orange = 30°`、`Yellow = 45°`、`Lime = 90°`、
     `Green = 140°`、`Teal = 170°`、`Cyan = 190°`、`Blue = 210°`、`Indigo = 240°`、
     `Violet = 260°`、`Pink = 300°`、`Crimson = 330°`。
-17. 各颜色模板的核心数组特征如下：
+18. 各颜色模板的核心数组特征如下：
     Red 当前改为更明确的“低起点 -> 中段持续抬升 -> 尾段回落”饱和度曲线，用于贴近用户指定的品牌红走势；
     Crimson / Pink / Violet 仍保持偏低起点、后段增强，用于避免浅色脏感。
     Orange / Yellow / Lime 一组亮部极亮、局部高饱和，用于保持暖色与荧光色的明快感；本轮已轻微压低 Lime 中段亮度以稳定 Yellow 60 的白字可读性。
