@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.54] - 2026-03-06
+### Changed
+- 将页面头部 `TopBar` 的品牌 LOGO 从内联绿色 `H` 图标改为 `favicon.svg`，使页面内品牌图标与浏览器 favicon 一致
+
 ## [0.0.53] - 2026-03-06
 ### Changed
 - 将网站图标替换为当前 Paper 选中图标，并补齐 `favicon.svg`、`favicon.png`、`favicon.ico` 与 `apple-touch-icon.png` 资源及 `index.html` 链接声明
