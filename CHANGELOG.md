@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.55] - 2026-03-06
+### Changed
+- 修复品牌 LOGO 与站点图标在 GitHub Pages 子路径下的资源路径，改为基于 `BASE_URL` 生成，避免 `/favicon.svg` 根路径 404
+
 ## [0.0.54] - 2026-03-06
 ### Changed
 - 将页面头部 `TopBar` 的品牌 LOGO 从内联绿色 `H` 图标改为 `favicon.svg`，使页面内品牌图标与浏览器 favicon 一致
