@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.53] - 2026-03-06
+### Changed
+- 将网站图标替换为当前 Paper 选中图标，并补齐 `favicon.svg`、`favicon.png`、`favicon.ico` 与 `apple-touch-icon.png` 资源及 `index.html` 链接声明
+
 ## [0.0.52] - 2026-03-02
 ### Changed
 - 将 `SVG / Figma` 从导出弹窗中移到顶部工具栏，改为带 Figma 图标的一键复制按钮，并保留轻量成功反馈
