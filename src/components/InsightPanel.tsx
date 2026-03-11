@@ -13,7 +13,7 @@ interface InsightPanelProps {
 export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpdateCurve }: InsightPanelProps) {
   if (!selectedPalette) {
     return (
-      <div className="w-80 border-l border-gray-200 bg-white p-6 flex items-center justify-center text-gray-400 text-sm">
+      <div className="w-80 border-none bg-white/60 backdrop-blur-3xl p-6 flex items-center justify-center text-text-muted text-sm font-bold shadow-[inset_0_2px_4px_rgba(255,255,255,0.8)]">
         Select a hue to view insights
       </div>
     );
@@ -93,33 +93,35 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
   } as const;
 
   return (
-    <aside className="w-96 border-l border-gray-200 bg-white flex flex-col h-full overflow-y-auto">
-      <div className="p-6 border-b border-gray-200">
-        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+    <aside className="w-96 bg-white/60 backdrop-blur-3xl flex flex-col h-full overflow-y-auto z-20 shadow-[-12px_0_48px_-12px_rgba(0,0,0,0.06),inset_0_2px_4px_rgba(255,255,255,0.8)] border-l border-white/50">
+      <div className="p-6 border-b border-border-subtle/50">
+        <h3 className="text-[13px] font-bold text-text-secondary uppercase tracking-wider mb-1">
           {selectedPalette.name} ({selectedPalette.hue}°)
         </h3>
-        <p className="text-gray-400 text-xs">Curve Analysis & Adjustment</p>
+        <p className="text-text-muted text-xs font-semibold">Curve Analysis & Adjustment</p>
       </div>
 
       {/* Editor Controls */}
       {activeColor && activeStepIndex !== null && (
-        <div className="p-6 border-b border-gray-200 bg-gray-50">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="p-6 border-b border-border-subtle/50 bg-white/40">
+          <div className="flex items-center gap-3 mb-5">
             <div 
-              className="w-8 h-8 rounded shadow-sm border border-gray-200"
+              className="w-10 h-10 rounded-2xl shadow-[0_4px_12px_-2px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8)] border border-white"
               style={{ backgroundColor: activeColor.hex }}
             />
             <div>
-              <div className="text-sm font-mono text-gray-900">{activeColor.hex}</div>
-              <div className="text-xs text-gray-500">Step {activeColor.step}</div>
+              <div className="text-[15px] font-mono font-bold text-text-main">{activeColor.hex}</div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-text-muted">Step {activeColor.step}</div>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
-              <div className="flex justify-between mb-1">
-                <label className="text-xs text-gray-500">Saturation</label>
-                <span className="text-xs font-mono text-gray-400">{Math.round(activeColor.s)}%</span>
+              <div className="flex justify-between items-center mb-3">
+                <label className="text-[13px] font-bold text-text-main">Saturation</label>
+                <span className="text-[11px] font-mono font-bold text-text-main bg-surface-panel px-2.5 py-1 rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] border border-border-default/40">
+                  {Math.round(activeColor.s)}%
+                </span>
               </div>
               <input
                 type="range"
@@ -127,13 +129,16 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
                 max="100"
                 value={activeColor.s}
                 onChange={(e) => onUpdateCurve('saturation', activeStepIndex, Number(e.target.value))}
-                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="range-input-soft"
+                style={{ '--range-progress': `${activeColor.s}%` } as React.CSSProperties}
               />
             </div>
             <div>
-              <div className="flex justify-between mb-1">
-                <label className="text-xs text-gray-500">Brightness</label>
-                <span className="text-xs font-mono text-gray-400">{Math.round(activeColor.b)}%</span>
+              <div className="flex justify-between items-center mb-3">
+                <label className="text-[13px] font-bold text-text-main">Brightness</label>
+                <span className="text-[11px] font-mono font-bold text-text-main bg-surface-panel px-2.5 py-1 rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] border border-border-default/40">
+                  {Math.round(activeColor.b)}%
+                </span>
               </div>
               <input
                 type="range"
@@ -141,7 +146,8 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
                 max="100"
                 value={activeColor.b}
                 onChange={(e) => onUpdateCurve('brightness', activeStepIndex, Number(e.target.value))}
-                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="range-input-soft"
+                style={{ '--range-progress': `${activeColor.b}%` } as React.CSSProperties}
               />
             </div>
           </div>
@@ -152,8 +158,8 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
       <div className="flex-1 p-6 space-y-8">
         
         {/* Saturation Curve */}
-        <div className="relative h-48 hover:z-20">
-          <h4 className="text-xs font-medium text-gray-400 mb-4">Saturation Curve</h4>
+        <div className="relative h-48 bg-white/50 rounded-[24px] p-4 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.04),inset_0_2px_4px_rgba(255,255,255,0.8)] border border-white hover:z-20 transition-all">
+          <h4 className="text-xs font-bold text-text-secondary uppercase tracking-[0.1em] mb-4">Saturation Curve</h4>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
@@ -168,9 +174,9 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
                     type="monotone" 
                     dataKey={`s_${p.id}`} 
                     name={p.name}
-                    stroke={isSelected ? '#3B82F6' : '#E5E7EB'} 
+                    stroke={isSelected ? '#5E912A' : '#E5E7EB'} 
                     strokeWidth={isSelected ? 2 : 1} 
-                    dot={isSelected ? { r: 3, fill: '#3B82F6', strokeWidth: 0 } : false} 
+                    dot={isSelected ? { r: 3, fill: '#5E912A', strokeWidth: 0 } : false} 
                     activeDot={isSelected ? { r: 5, strokeWidth: 0 } : false}
                     isAnimationActive={false}
                   />
@@ -181,8 +187,8 @@ export function InsightPanel({ palettes, selectedPalette, activeStepIndex, onUpd
         </div>
 
         {/* Brightness Curve */}
-        <div className="relative h-48 hover:z-20">
-          <h4 className="text-xs font-medium text-gray-400 mb-4">Brightness Curve</h4>
+        <div className="relative h-48 bg-white/50 rounded-[24px] p-4 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.04),inset_0_2px_4px_rgba(255,255,255,0.8)] border border-white hover:z-20 transition-all">
+          <h4 className="text-xs font-bold text-text-secondary uppercase tracking-[0.1em] mb-4">Brightness Curve</h4>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />

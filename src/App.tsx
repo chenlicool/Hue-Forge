@@ -54,21 +54,32 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-[#F5F5F5] text-gray-900 font-sans overflow-hidden">
+    <div className="flex h-screen flex-col bg-surface-base relative text-text-main font-sans overflow-hidden">
+      {/* Background Grid Pattern Overlay */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: `linear-gradient(to right, var(--color-border-default) 1px, transparent 1px), linear-gradient(to bottom, var(--color-border-default) 1px, transparent 1px)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0',
+        }}
+        aria-hidden="true"
+      />
+
       {/* 1. Branding Header */}
-      <TopBar /> 
-      
+      <TopBar />
+
       {/* 2. Action Toolbar */}
-      <Toolbar 
-        onSetPresetHues={setPresetHues} 
+      <Toolbar
+        onSetPresetHues={setPresetHues}
         onOpenExport={() => setIsExportOpen(true)}
         onCopyFigma={handleCopyFigma}
         figmaCopyState={figmaCopyState}
       />
 
       {/* 3. Hue Spectrum Input */}
-      <div className="bg-white border-b border-gray-200 z-10">
-        <HueBar 
+      <div className="relative z-30 bg-surface-panel/80 backdrop-blur-3xl shadow-[0_12px_48px_-12px_rgba(0,0,0,0.06),inset_0_2px_4px_rgba(255,255,255,0.8)] border-b border-border-subtle/50">
+        <HueBar
           hueConfigs={hueConfigs}
           selectedHueId={selectedHueId}
           onSelectHue={handleSelectHue}
@@ -79,7 +90,7 @@ export default function App() {
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* 4. Main Matrix Output */}
-        <MatrixBoard 
+        <MatrixBoard
           palettes={palettes}
           selectedHueId={selectedHueId}
           onSelectHue={handleSelectHue}
@@ -92,10 +103,10 @@ export default function App() {
           onUpdateStepValue={updateStepValue}
           onUpdateHueName={(id, name) => updateHueConfig(id, { name })}
         />
-        
+
         {/* 5. Details Panel */}
         {selectedHueId && (
-          <InsightPanel 
+          <InsightPanel
             palettes={palettes}
             selectedPalette={selectedPalette}
             activeStepIndex={activeStepIndex}

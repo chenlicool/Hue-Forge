@@ -1,8 +1,8 @@
 export const DEFAULT_STEPS = 10;
 
 // Standard brightness scale from the prompt
-// 10: 95, 20: 87, 30: 78, 40: 68, 50: 56, 60: 45, 70: 35, 80: 28, 90: 21, 100: 15
-export const DEFAULT_BRIGHTNESS_SCALE = [95, 87, 78, 68, 56, 45, 35, 28, 21, 15];
+// 10: 96, 20: 87, 30: 78, 40: 68, 50: 56, 60: 44, 70: 34, 80: 24, 90: 14, 100: 4
+export const DEFAULT_BRIGHTNESS_SCALE = [96, 87, 78, 68, 56, 44, 34, 24, 14, 4];
 
 // Default saturation curve (can be adjusted per hue)
 // Usually saturation increases as brightness decreases, but it's often non-linear.

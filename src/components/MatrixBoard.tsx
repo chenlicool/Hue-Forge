@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
 import { ColorStep, HueConfig } from '@/utils/types';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Check, Copy } from 'lucide-react';
 
 const BASE_TRACK_PADDING = 14;
 
@@ -77,11 +77,11 @@ function BaseScaleRail({ values, onAddStep, onRemoveStep, onUpdateStepValue }: B
   }, [selectedIndex, values.length]);
 
   return (
-    <div className="flex flex-1 flex-col bg-[#F5F5F5] py-4 pr-3" style={{ paddingLeft: BASE_TRACK_PADDING }}>
+    <div className="flex flex-1 flex-col bg-surface-base py-4 pr-3" style={{ paddingLeft: BASE_TRACK_PADDING }}>
       <div className="flex h-full flex-1 items-stretch justify-start">
         <div
           ref={trackRef}
-          className="relative h-full w-[66px] cursor-crosshair bg-[linear-gradient(180deg,#f5f5f5_0%,#e8e8e8_16%,#d3d3d3_34%,#b3b3b3_52%,#8f8f8f_70%,#5f5f5f_87%,#262626_100%)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.78),0_10px_24px_rgba(15,23,42,0.05)]"
+          className="relative h-full w-[66px] cursor-crosshair rounded-2xl ring-[3px] ring-white bg-[linear-gradient(180deg,#f5f5f5_0%,#e8e8e8_16%,#d3d3d3_34%,#b3b3b3_52%,#8f8f8f_70%,#5f5f5f_87%,#262626_100%)] shadow-[0_4px_12px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.78)]"
           onClick={(event) => {
             if (!trackRef.current || draggingIndex !== null) {
               return;
@@ -93,8 +93,7 @@ function BaseScaleRail({ values, onAddStep, onRemoveStep, onUpdateStepValue }: B
           <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-white/45" />
 
           {values.map((brightness, index) => {
-            const isSelected = selectedIndex === index;
-            const isDragging = draggingIndex === index;
+            const isActive = selectedIndex === index || draggingIndex === index;
 
             return (
               <div
@@ -117,9 +116,9 @@ function BaseScaleRail({ values, onAddStep, onRemoveStep, onUpdateStepValue }: B
                   }}
                   className={cn(
                     'relative flex h-5 w-5 items-center justify-center rounded-full border transition-all',
-                    isSelected || isDragging
-                      ? 'border-slate-700 bg-white shadow-[0_8px_18px_rgba(15,23,42,0.18)]'
-                      : 'border-white/80 bg-white/95 shadow-[0_6px_12px_rgba(15,23,42,0.12)] hover:scale-105',
+                    isActive
+                      ? 'border-text-main bg-white shadow-sm shadow-border-focus/50'
+                      : 'border-white/80 bg-white/95 shadow-sm shadow-border-default/50 hover:scale-105',
                   )}
                 >
                   <span
@@ -128,21 +127,22 @@ function BaseScaleRail({ values, onAddStep, onRemoveStep, onUpdateStepValue }: B
                   />
                 </button>
 
-                {(isSelected || isDragging) && (
-                  <div className="absolute left-8 top-1/2 min-w-[4.6rem] -translate-y-1/2 rounded-lg border border-slate-200 bg-white/96 px-3 py-2 text-left shadow-[0_14px_30px_rgba(15,23,42,0.12)] backdrop-blur-sm">
-                    <div className="text-lg font-semibold leading-none text-slate-900">{brightness}</div>
-                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                {/* Right Tooltip showing current value */}
+                {isActive && (
+                  <div className="absolute left-8 top-1/2 min-w-[4.6rem] -translate-y-1/2 rounded-2xl border-none bg-white/96 px-3 py-2 text-left shadow-sm shadow-border-default/50 backdrop-blur-sm">
+                    <div className="text-lg font-semibold leading-none text-text-main">{brightness}</div>
+                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-secondary">
                       Brightness
                     </div>
                     <button
                       type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
+                      onClick={(e) => {
+                        e.stopPropagation();
                         onRemoveStep(index);
                         setSelectedIndex((current) => (current === index ? null : current));
                       }}
-                      className="mt-2 inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 hover:text-red-500"
-                      title="Remove step"
+                      className="mt-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-surface-base text-text-secondary transition-colors hover:bg-error-main/20 hover:text-error-main"
+                      aria-label="Remove step"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -189,6 +189,13 @@ export function MatrixBoard({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const selectedColRef = React.useRef<HTMLDivElement>(null);
+  const [copiedHex, setCopiedHex] = useState<string | null>(null);
+
+  const handleCopy = (hex: string) => {
+    navigator.clipboard.writeText(hex);
+    setCopiedHex(hex);
+    setTimeout(() => setCopiedHex(null), 1500);
+  };
 
   useEffect(() => {
     if (selectedColRef.current && containerRef.current) {
@@ -208,11 +215,11 @@ export function MatrixBoard({
   }, [selectedHueId]);
 
   return (
-    <div className="flex flex-1 overflow-hidden bg-[#F5F5F5] relative">
+    <div className="flex flex-1 overflow-hidden bg-surface-base relative">
       {/* Module 1: Base Scale (Fixed Left) */}
-      <div className="w-24 shrink-0 bg-white border-r border-gray-200 flex flex-col z-30 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-        <div className="h-16 flex items-center justify-center border-b border-gray-100 bg-gray-50 z-40">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-[0.18em] text-center leading-tight">Base</span>
+      <div className="w-24 shrink-0 bg-surface-panel/60 backdrop-blur-3xl border-r border-border-subtle/50 flex flex-col z-30 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div className="h-16 flex items-center justify-center border-b border-border-subtle/50 relative z-40">
+          <span className="text-xs font-bold text-text-secondary uppercase tracking-[0.18em] text-center leading-tight">Base</span>
         </div>
         <BaseScaleRail
           values={baseScale}
@@ -233,21 +240,21 @@ export function MatrixBoard({
                 key={palette.id} 
                 ref={selectedHueId === palette.id ? selectedColRef : null}
                 className={cn(
-                  "flex flex-col w-32 shrink-0 border-r transition-colors bg-white",
-                  selectedHueId === palette.id ? "bg-blue-50/30" : "bg-white",
-                  isLastGray ? "border-r-4 border-gray-200" : "border-gray-100"
+                  "flex flex-col w-32 shrink-0 transition-colors bg-white relative",
+                  selectedHueId === palette.id ? "bg-accent-subtle/30" : "bg-white",
+                  isLastGray ? "border-r-4 border-border-default" : "border-border-subtle"
                 )}
                 onClick={() => onSelectHue(palette.id)}
               >
                 {/* Column Header */}
-                <div className="h-16 flex items-center justify-center border-b border-gray-100 relative group/header bg-white sticky top-0 z-20">
+                <div className="h-16 flex items-center justify-center border-b border-border-subtle/50 relative group/header bg-transparent sticky top-0 z-20">
                   <input
                     type="text"
                     value={palette.name}
                     onChange={(e) => onUpdateHueName(palette.id, e.target.value)}
                     className={cn(
-                      "text-sm font-medium bg-transparent text-center w-full focus:outline-none px-2",
-                      selectedHueId === palette.id ? "text-gray-900" : "text-gray-500"
+                      "text-sm font-bold bg-transparent text-center w-full focus:outline-none px-2 transition-colors",
+                      selectedHueId === palette.id ? "text-text-main" : "text-text-muted"
                     )}
                   />
                   
@@ -257,7 +264,7 @@ export function MatrixBoard({
                       e.stopPropagation();
                       onRemoveHue(palette.id);
                     }}
-                    className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-red-500 rounded opacity-0 group-hover/header:opacity-100 transition-all"
+                    className="absolute top-2 right-2 p-1.5 text-text-muted hover:bg-surface-panel hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1)] hover:text-error-main rounded-xl opacity-0 group-hover/header:opacity-100 transition-all"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -280,17 +287,29 @@ export function MatrixBoard({
                           e.stopPropagation();
                           onSelectHue(palette.id);
                           onColorClick(palette.id, index);
+                          handleCopy(color.hex);
                         }}
                         className={cn(
-                          "flex-1 w-full rounded shadow-sm cursor-pointer transition-transform duration-200 relative group min-h-[3rem]",
-                          isActive ? "ring-2 ring-blue-500 scale-105 z-10" : "hover:scale-105 hover:shadow-md"
+                          "flex-1 w-full rounded-2xl cursor-pointer transition-all duration-300 relative group min-h-[3rem]",
+                          isActive 
+                            ? "ring-[3px] ring-white scale-105 z-10 shadow-[0_12px_32px_-8px_var(--color-accent-main),inset_0_2px_2px_rgba(255,255,255,0.4)]" 
+                            : "shadow-[inset_0_2px_2px_rgba(255,255,255,0.2)] hover:scale-105 hover:shadow-[0_8px_20px_-4px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.4)]"
                         )}
                         style={{ backgroundColor: color.hex, color: textColor }}
                       >
                         <div className="flex flex-col justify-between h-full p-2 text-[10px] font-medium leading-tight">
                           <div className="flex justify-between items-start">
                             <span className="font-bold text-xs opacity-90">{color.step}</span>
-                            <span className="font-bold opacity-90">{wcag}</span>
+                            <div className="relative font-bold opacity-90 flex items-center justify-end h-[14px] min-w-[20px]">
+                              {copiedHex === color.hex ? (
+                                <Check className="w-[14px] h-[14px]" />
+                              ) : (
+                                <>
+                                  <span className="block group-hover:opacity-0 transition-opacity duration-200">{wcag}</span>
+                                  <Copy className="w-[14px] h-[14px] absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                                </>
+                              )}
+                            </div>
                           </div>
                           <div className="flex justify-between items-end opacity-75">
                             <span>B:{Math.round(color.b)}</span>
@@ -316,20 +335,20 @@ export function MatrixBoard({
               key={palette.id} 
               ref={selectedHueId === palette.id ? selectedColRef : null}
               className={cn(
-                "flex flex-col w-32 shrink-0 border-r border-gray-100 transition-colors bg-white",
-                selectedHueId === palette.id ? "bg-blue-50/30" : "bg-white"
+                "flex flex-col w-32 shrink-0 border-r border-border-subtle transition-colors bg-white",
+                selectedHueId === palette.id ? "bg-accent-subtle/30" : "bg-white"
               )}
               onClick={() => onSelectHue(palette.id)}
             >
               {/* Column Header */}
-              <div className="h-16 flex items-center justify-center border-b border-gray-100 relative group/header bg-white sticky top-0 z-20">
+              <div className="h-16 flex items-center justify-center border-b border-border-subtle/50 relative group/header bg-transparent sticky top-0 z-20">
                 <input
                   type="text"
                   value={palette.name}
                   onChange={(e) => onUpdateHueName(palette.id, e.target.value)}
                   className={cn(
-                    "text-sm font-medium bg-transparent text-center w-full focus:outline-none px-2",
-                    selectedHueId === palette.id ? "text-gray-900" : "text-gray-500"
+                    "text-sm font-bold bg-transparent text-center w-full focus:outline-none px-2 transition-colors",
+                    selectedHueId === palette.id ? "text-text-main" : "text-text-muted"
                   )}
                 />
                 
@@ -339,7 +358,7 @@ export function MatrixBoard({
                     e.stopPropagation();
                     onRemoveHue(palette.id);
                   }}
-                  className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-red-500 rounded opacity-0 group-hover/header:opacity-100 transition-all"
+                  className="absolute top-2 right-2 p-1.5 text-text-muted hover:bg-surface-panel hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1)] hover:text-error-main rounded-xl opacity-0 group-hover/header:opacity-100 transition-all"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -362,17 +381,29 @@ export function MatrixBoard({
                         e.stopPropagation();
                         onSelectHue(palette.id);
                         onColorClick(palette.id, index);
+                        handleCopy(color.hex);
                       }}
                       className={cn(
-                        "flex-1 w-full rounded shadow-sm cursor-pointer transition-transform duration-200 relative group min-h-[3rem]",
-                        isActive ? "ring-2 ring-blue-500 scale-105 z-10" : "hover:scale-105 hover:shadow-md"
+                        "flex-1 w-full rounded-2xl cursor-pointer transition-all duration-300 relative group min-h-[3rem]",
+                        isActive 
+                          ? "ring-[3px] ring-white scale-105 z-10 shadow-[0_12px_32px_-8px_var(--color-accent-main),inset_0_2px_2px_rgba(255,255,255,0.4)]" 
+                          : "shadow-[inset_0_2px_2px_rgba(255,255,255,0.2)] hover:scale-105 hover:shadow-[0_8px_20px_-4px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.4)]"
                       )}
                       style={{ backgroundColor: color.hex, color: textColor }}
                     >
                       <div className="flex flex-col justify-between h-full p-2 text-[10px] font-medium leading-tight">
                         <div className="flex justify-between items-start">
                           <span className="font-bold text-xs opacity-90">{color.step}</span>
-                          <span className="font-bold opacity-90">{wcag}</span>
+                          <div className="relative font-bold opacity-90 flex items-center justify-end h-[14px] min-w-[20px]">
+                            {copiedHex === color.hex ? (
+                              <Check className="w-[14px] h-[14px]" />
+                            ) : (
+                              <>
+                                <span className="block group-hover:opacity-0 transition-opacity duration-200">{wcag}</span>
+                                <Copy className="w-[14px] h-[14px] absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                              </>
+                            )}
+                          </div>
                         </div>
                         <div className="flex justify-between items-end opacity-75">
                           <span>B:{Math.round(color.b)}</span>
@@ -391,7 +422,7 @@ export function MatrixBoard({
 
           {/* Empty State / Add Placeholder */}
           {palettes.length === 0 && (
-              <div className="w-64 flex items-center justify-center text-gray-400 text-sm">
+              <div className="w-64 flex items-center justify-center text-text-muted text-sm font-bold">
                   Add colors from the spectrum above
               </div>
           )}

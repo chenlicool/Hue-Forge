@@ -68,11 +68,32 @@ export function getWcagRating(ratio: number, fontSize: 'normal' | 'large' = 'nor
   }
 }
 
-// Get color name from Hue
-export function getHueName(h: number): string {
+/**
+ * Get color name from Hue based on the palette size (8, 12, 24)
+ * to provide a clear, hierarchical naming system.
+ */
+export function getHueName(h: number, count?: number): string {
   h = Math.round(h) % 360;
   if (h < 0) h += 360;
-  
+
+  // 1. Minimum Palette (8 Hues) - Uses most basic core names
+  if (count === 8) {
+    const names = ["Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Purple", "Pink"];
+    const index = Math.floor(((h + 22.5) % 360) / 45);
+    return names[index];
+  }
+
+  // 2. Standard Palette (12 Hues) - Classic color wheel naming
+  if (count === 12) {
+    const names = [
+      "Red", "Orange", "Yellow", "Lime", "Green", "Teal", 
+      "Cyan", "Blue", "Indigo", "Violet", "Pink", "Rose"
+    ];
+    const index = Math.floor(((h + 15) % 360) / 30);
+    return names[index];
+  }
+
+  // 3. Detailed Palette (24 Hues) or Manual Adjustments - Maximum precision
   const names = [
     "Red", "Red-Orange", "Orange", "Amber", "Yellow", "Lime", 
     "Chartreuse", "Green", "Emerald", "Teal", "Cyan", "Sky", 
@@ -80,7 +101,7 @@ export function getHueName(h: number): string {
     "Fuchsia", "Magenta", "Pink", "Rose", "Crimson", "Ruby"
   ];
   
-  // Each slice is 15 degrees. Offset by 7.5 so Red is 352.5 to 7.5
+  // Each slice is 15 degrees. Offset by 7.5 so Red center is 0
   const index = Math.floor(((h + 7.5) % 360) / 15);
   return names[index];
 }

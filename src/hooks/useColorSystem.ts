@@ -59,7 +59,7 @@ export function useColorSystem() {
     },
     {
       id: 'accent-gray',
-      hue: 210,
+      hue: 200,
       name: 'Accent Gray',
       customName: true,
       saturationCurve: [...ACCENT_GRAY_SATURATION_SCALE],
@@ -189,6 +189,10 @@ export function useColorSystem() {
     let targetSaturation = [...DEFAULT_SATURATION_SCALE];
     let targetBrightness = [...baseScale];
 
+    // Determine naming density based on total colored hues (+1 for the one we're about to add)
+    const colorCount = hueConfigs.filter(h => h.id !== 'gray' && h.id !== 'accent-gray').length + 1;
+    const namingDensity = colorCount <= 8 ? 8 : (colorCount <= 12 ? 12 : 24);
+
     // Use custom curves for Red range (345-15), Orange range (15-38), Yellow range (38-60), Lime range (60-115), Green range (115-155), Teal range (155-180), Cyan range (180-195), Blue range (195-225), Indigo range (225-250), Violet range (250-285), Pink range (285-315), or Crimson range (315-345)
     if (hue >= 345 || hue < 15) {
       targetSaturation = [...RED_SATURATION_SCALE];
@@ -235,7 +239,7 @@ export function useColorSystem() {
     setHueConfigs(prev => [...prev, {
       id: newId,
       hue,
-      name: getHueName(hue),
+      name: getHueName(hue, namingDensity),
       saturationCurve: newSaturation,
       brightnessCurve: newBrightness,
     }]);
@@ -250,19 +254,25 @@ export function useColorSystem() {
   };
 
   const updateHueConfig = (id: string, updates: Partial<HueConfig>) => {
-    setHueConfigs(prev => prev.map(h => {
-      if (h.id === id) {
-        const updated = { ...h, ...updates };
-        if (updates.hue !== undefined && !h.customName) {
-          updated.name = getHueName(updates.hue);
+    setHueConfigs(prev => {
+      // Calculate current naming density
+      const colorCount = prev.filter(h => h.id !== 'gray' && h.id !== 'accent-gray').length;
+      const namingDensity = colorCount <= 8 ? 8 : (colorCount <= 12 ? 12 : 24);
+
+      return prev.map(h => {
+        if (h.id === id) {
+          const updated = { ...h, ...updates };
+          if (updates.hue !== undefined && !h.customName) {
+            updated.name = getHueName(updates.hue, namingDensity);
+          }
+          if (updates.name !== undefined) {
+            updated.customName = true;
+          }
+          return updated;
         }
-        if (updates.name !== undefined) {
-          updated.customName = true;
-        }
-        return updated;
-      }
-      return h;
-    }));
+        return h;
+      });
+    });
   };
 
   const updateCurvePoint = (hueId: string, type: 'saturation' | 'brightness', index: number, value: number) => {
@@ -335,7 +345,7 @@ export function useColorSystem() {
       newConfigs.push({
         id: `preset-${i}`,
         hue: h,
-        name: getHueName(h),
+        name: getHueName(h, count),
         saturationCurve: newSaturation,
         brightnessCurve: newBrightness,
       });

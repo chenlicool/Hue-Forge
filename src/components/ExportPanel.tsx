@@ -38,35 +38,49 @@ export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/20 backdrop-blur-[2px] px-6">
-      <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-text-main/20 backdrop-blur-[2px] px-6">
+      <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-border-subtle bg-white shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
+        <div className="flex items-center justify-between border-b border-border-subtle px-6 py-5">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900">Export</h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <h2 className="text-lg font-semibold tracking-tight text-text-main">Export</h2>
+            <p className="mt-1 text-sm text-text-secondary">
               Copy structured palette output for code or direct AI input.
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={handleCopy}
-              className="inline-flex items-center gap-2 rounded-xl bg-lime-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-lime-500"
+              className="group relative flex items-center gap-2 h-[2.6rem] pr-5 pl-1.5 rounded-full bg-surface-panel/90 backdrop-blur-md transition-all duration-300 transform active:scale-[0.97] focus:outline-none ring-1 ring-border-default/50 shadow-[0_6px_16px_-4px_rgba(0,0,0,0.08),inset_0_2px_4px_rgba(255,255,255,1)] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.12),inset_0_2px_4px_rgba(255,255,255,1)]"
             >
-              <Copy className="h-4 w-4" />
-              {copyState === 'done' ? 'Copied' : 'Copy'}
+              <div className={cn(
+                "flex items-center justify-center w-[1.9rem] h-[1.9rem] rounded-full transition-colors duration-300 shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),0_1px_2px_rgba(0,0,0,0.05)] border border-black/5",
+                copyState === 'done'
+                  ? 'bg-brand-50 text-brand-100'
+                  : 'bg-brand-subtle text-brand-main group-hover:bg-brand-muted/50'
+              )}>
+                <Copy className="w-[1.1rem] h-[1.1rem] stroke-[2px]" />
+              </div>
+              <span className={cn(
+                "text-[0.9rem] font-bold tracking-tight transition-colors duration-300",
+                copyState === 'done' ? 'text-brand-active' : 'text-text-main'
+              )}>
+                {copyState === 'done' ? 'Copied' : 'Copy'}
+              </span>
             </button>
             <button
               onClick={onClose}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+              className="group relative flex items-center justify-center w-[2.6rem] h-[2.6rem] rounded-full bg-surface-panel/90 backdrop-blur-md transition-all duration-300 transform active:scale-[0.97] focus:outline-none ring-1 ring-border-default/50 shadow-[0_6px_16px_-4px_rgba(0,0,0,0.08),inset_0_2px_4px_rgba(255,255,255,1)] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.12),inset_0_2px_4px_rgba(255,255,255,1)]"
               aria-label="Close export panel"
             >
-              <X className="h-4 w-4" />
+              <div className="flex items-center justify-center w-[1.9rem] h-[1.9rem] rounded-full bg-surface-base text-text-muted group-hover:text-text-main group-hover:bg-surface-sunken transition-colors duration-300 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7),0_1px_2px_rgba(0,0,0,0.05)] border border-black/5">
+                <X className="w-[1.2rem] h-[1.2rem] stroke-[2px]" />
+              </div>
             </button>
           </div>
         </div>
 
-        <div className="border-b border-slate-200 px-6">
+        <div className="border-b border-border-subtle px-6">
           <div className="flex gap-8 overflow-x-auto py-4">
             {EXPORT_TABS.map((tab) => (
               <button
@@ -74,12 +88,12 @@ export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) 
                 onClick={() => setActiveFormat(tab.id)}
                 className={cn(
                   'relative whitespace-nowrap pb-2 text-[2rem] font-semibold tracking-tight transition-colors',
-                  activeFormat === tab.id ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700',
+                  activeFormat === tab.id ? 'text-text-main' : 'text-text-secondary hover:text-text-main',
                 )}
               >
                 {tab.label}
                 {activeFormat === tab.id && (
-                  <span className="absolute inset-x-0 bottom-0 border-b-2 border-dotted border-slate-900" />
+                  <span className="absolute inset-x-0 bottom-0 border-b-2 border-dotted border-text-main" />
                 )}
               </button>
             ))}
@@ -87,13 +101,13 @@ export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) 
         </div>
 
         <div className="grid gap-0 lg:grid-cols-[240px_minmax(0,1fr)]">
-          <div className="border-r border-slate-200 bg-slate-50/70 px-6 py-5">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Usage</h3>
-            <div className="mt-4 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+          <div className="border-r border-border-subtle bg-surface-base/70 px-6 py-5">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-text-secondary">Usage</h3>
+            <div className="mt-4 rounded-2xl border border-border-default bg-white px-4 py-3">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">AI Export</div>
-                  <div className="mt-1 text-xs leading-5 text-slate-500">
+                  <div className="text-sm font-semibold text-text-main">AI Export</div>
+                  <div className="mt-1 text-xs leading-5 text-text-secondary">
                     Wrap the current export in AI-friendly instructions.
                   </div>
                 </div>
@@ -103,40 +117,40 @@ export function ExportPanel({ palettes, baseScale, onClose }: ExportPanelProps) 
                   aria-checked={effectiveAiMode}
                   onClick={() => setAiMode((value) => !value)}
                   className={cn(
-                    'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors',
-                    effectiveAiMode ? 'bg-lime-500' : 'bg-slate-300',
+                    'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors border shadow-[inset_0_2px_4px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.7)] hover:border-border-focus/40 focus:outline-none',
+                    effectiveAiMode ? 'bg-brand-muted/80 border-brand-main/30' : 'bg-surface-sunken border-border-default/60',
                   )}
                 >
                   <span
                     className={cn(
-                      'inline-block h-5 w-5 transform rounded-full bg-white transition-transform',
-                      effectiveAiMode ? 'translate-x-6' : 'translate-x-1',
+                      'inline-block h-[1.3rem] w-[1.3rem] transform rounded-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_2px_6px_-1px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,1)] border border-black/5',
+                      effectiveAiMode ? 'translate-x-[22px] bg-white' : 'translate-x-[3px] bg-surface-panel',
                     )}
                   />
                 </button>
               </div>
             </div>
-            <div className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
+            <div className="mt-4 space-y-3 text-sm leading-6 text-text-muted">
               <p>Paste the current tab directly into your codebase or into your AI workflow.</p>
               <p>
-                <span className="font-medium text-slate-800">CSS</span> and <span className="font-medium text-slate-800">Tailwind</span> are implementation-first.
+                <span className="font-medium text-text-main">CSS</span> and <span className="font-medium text-text-main">Tailwind</span> are implementation-first.
               </p>
               <p>
-                <span className="font-medium text-slate-800">Tokens</span> includes structured metadata for AI parsing, including HSB and contrast data.
+                <span className="font-medium text-text-main">Tokens</span> includes structured metadata for AI parsing, including HSB and contrast data.
               </p>
               <p>
-                <span className="font-medium text-slate-800">Figma</span> copy lives in the toolbar and writes the current palette board as SVG directly to your clipboard.
+                <span className="font-medium text-text-main">Figma</span> copy lives in the toolbar and writes the current palette board as SVG directly to your clipboard.
               </p>
               {effectiveAiMode && (
-                <p className="rounded-xl bg-lime-50 px-3 py-2 text-xs leading-5 text-lime-800">
+                <p className="rounded-xl bg-brand-subtle px-3 py-2 text-xs leading-5 text-brand-hover">
                   AI Export is on. Copy now includes usage instructions plus the raw export payload.
                 </p>
               )}
             </div>
           </div>
 
-          <div className="min-w-0 bg-[#F8FAFC] p-6">
-            <pre className="h-[32rem] overflow-auto rounded-2xl border border-slate-200 bg-slate-950 px-5 py-4 text-sm leading-6 text-slate-100">
+          <div className="min-w-0 bg-surface-base p-6">
+            <pre className="h-[32rem] overflow-auto rounded-3xl border border-border-default bg-text-main px-5 py-4 text-sm leading-6 text-text-muted">
               <code>{content}</code>
             </pre>
           </div>

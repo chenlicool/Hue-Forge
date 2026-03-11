@@ -137,8 +137,22 @@ export function HueBar({
         />
       </div>
 
-      {/* Handles Container - positioned to overlay the bottom edge */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+      {/* 1. Lines Layer - Rendered behind handles */}
+      <div className="absolute top-4 h-8 left-0 w-full pointer-events-none z-0">
+        {hueConfigs.filter(c => c.id !== 'gray').map((config) => (
+          <div 
+            key={`line-${config.id}`}
+            className="absolute top-0 h-full w-[1.2px] bg-white shadow-[0_0_2px_rgba(0,0,0,0.3)] opacity-100"
+            style={{
+              left: `calc(${TRACK_SIDE_PADDING}px + ((100% - ${TRACK_SIDE_PADDING * 2}px) * ${config.hue / 360}))`,
+              transform: 'translateX(-50%)', // Center the line on the exact coordinate
+            }}
+          />
+        ))}
+      </div>
+
+      {/* 2. Handles Layer - Rendered in front of lines */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10">
         {hueConfigs.filter(c => c.id !== 'gray').map((config) => (
           <div
             key={config.id}
@@ -154,29 +168,29 @@ export function HueBar({
             onClick={(e) => e.stopPropagation()}
           >
             {config.id === 'accent-gray' ? (
-              <>
+              <div className="flex flex-col items-center h-full justify-between">
                 <div 
                   className={cn(
-                    "w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center transition-transform duration-100",
-                    selectedHueId === config.id ? "scale-110 ring-2 ring-blue-500" : "hover:scale-110",
+                    "w-5 h-5 bg-white rounded-full shadow-[0_4px_12px_-2px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8)] flex items-center justify-center transition-transform duration-100 z-10",
+                    selectedHueId === config.id ? "scale-110 ring-[3px] ring-white shadow-[0_8px_16px_-4px_rgba(0,0,0,0.2)]" : "hover:scale-110",
                   )}
                 >
                   <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: `hsl(${config.hue}, 100%, 50%)` }} />
                 </div>
-                <div className="h-4 w-px bg-slate-300" />
-              </>
+                <div className="h-4" /> {/* Spacer for bottom handles area */}
+              </div>
             ) : (
-              <>
-                <div className="h-4 w-px bg-slate-300" />
+              <div className="flex flex-col items-center h-full justify-between">
+                <div className="h-4" /> {/* Spacer for top handles area */}
                 <div 
                   className={cn(
-                    "w-5 h-5 bg-white rounded-md shadow-md flex items-center justify-center transition-transform duration-100",
-                    selectedHueId === config.id ? "scale-110 ring-2 ring-blue-500" : "hover:scale-110",
+                    "w-5 h-5 bg-white rounded-[7px] shadow-[0_4px_12px_-2px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8)] flex items-center justify-center transition-transform duration-100 z-10",
+                    selectedHueId === config.id ? "scale-110 ring-[3px] ring-white shadow-[0_8px_16px_-4px_rgba(0,0,0,0.2)]" : "hover:scale-110",
                   )}
                 >
                   <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: `hsl(${config.hue}, 100%, 50%)` }} />
                 </div>
-              </>
+              </div>
             )}
           </div>
         ))}
