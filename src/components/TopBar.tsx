@@ -6,7 +6,7 @@ export function TopBar() {
   const logoSrc = `${import.meta.env.BASE_URL}favicon.svg`;
 
   return (
-    <header className="h-[80px] w-full bg-surface-panel/70 backdrop-blur-2xl flex items-center px-8 relative z-50 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.04),inset_0_1px_1px_rgba(255,255,255,0.8)] border-b border-border-default/60">
+    <header className="h-[60px] w-full bg-surface-panel/70 backdrop-blur-2xl flex items-center px-8 relative z-50 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.04),inset_0_1px_1px_rgba(255,255,255,0.8)] border-b border-border-default/60">
       <div className="flex items-center gap-3">
         <img 
           src={logoSrc} 

@@ -54,7 +54,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-surface-base relative text-text-main font-sans overflow-hidden">
+    <div className="flex h-screen min-w-[1000px] flex-col bg-surface-base relative text-text-main font-sans overflow-hidden overflow-x-auto">
       {/* Background Grid Pattern Overlay */}
       <div
         className="pointer-events-none absolute inset-0"
